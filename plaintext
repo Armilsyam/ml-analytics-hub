@@ -1,0 +1,8 @@
+ml-analytics-hub/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── app.py
+├── requirements.txt
+├── .gitignore
+└── README.md
