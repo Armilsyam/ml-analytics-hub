@@ -1,0 +1,65 @@
+name: Deploy Streamlit to GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Generate Static WebAssembly App (Stlite)
+        run: |
+          mkdir -p dist
+          cat << 'EOF' > dist/index.html
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="UTF-8" />
+              <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+              <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+              <title>AI & Data Science Analytics Hub</title>
+              <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.63.0/build/stlite.css" />
+            </head>
+            <body>
+              <div id="root"></div>
+              <script src="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.63.0/build/stlite.js"></script>
+              <script>
+                fetch("app.py")
+                  .then((res) => res.text())
+                  .then((code) => {
+                    stlite.mount(
+                      {
+                        requirements: ["pandas", "numpy", "scikit-learn", "openpyxl"],
+                        entrypoint: "app.py",
+                        files: { "app.py": code },
+                      },
+                      document.getElementById("root")
+                    );
+                  });
+              </script>
+            </body>
+          </html>
+          EOF
+          cp app.py dist/app.py
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
