@@ -1,0 +1,21 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Byte-compiled / cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database SQLite lokal & File Sementara
+*.db
+*.sqlite3
+*.csv
+*.xlsx
+
+# Konfigurasi IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
